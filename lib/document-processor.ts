@@ -28,7 +28,7 @@ export async function extractTextFromFile(
         return typeof fileBuffer === 'string' ? fileBuffer : new TextDecoder().decode(fileBuffer);
     }
   } catch (error) {
-    console.error('[v0] Text extraction error:', error);
+    console.error('Text extraction error:', error);
     throw new Error(
       `Failed to extract text from ${extension?.toUpperCase() || 'file'}: ${String(error)}`
     );
@@ -84,7 +84,7 @@ async function extractPdfText(fileBuffer: ArrayBuffer): Promise<string> {
       pdfParser.parseBuffer(buffer);
     });
   } catch (error) {
-    console.error('[v0] PDF extraction error:', error);
+    console.error('PDF extraction error:', error);
     throw new Error(`Failed to extract text from PDF: ${String(error)}`);
   }
 }
@@ -95,7 +95,7 @@ async function extractDocxText(fileBuffer: ArrayBuffer): Promise<string> {
     const result = await mammoth.extractRawText({ arrayBuffer: fileBuffer });
     return result.value;
   } catch (error) {
-    console.error('[v0] DOCX extraction error:', error);
+    console.error('DOCX extraction error:', error);
     throw new Error(`Failed to parse DOCX: ${String(error)}`);
   }
 }

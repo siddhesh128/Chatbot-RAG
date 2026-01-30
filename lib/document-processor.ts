@@ -59,8 +59,13 @@ async function extractPdfText(fileBuffer: ArrayBuffer): Promise<string> {
                   if (text.R) {
                     for (const r of text.R) {
                       if (r.T) {
-                        // Decode URI-encoded text
-                        textParts.push(decodeURIComponent(r.T));
+                        // Safely decode URI-encoded text
+                        try {
+                          textParts.push(decodeURIComponent(r.T));
+                        } catch {
+                          // If decoding fails, use the text as-is
+                          textParts.push(r.T);
+                        }
                       }
                     }
                   }

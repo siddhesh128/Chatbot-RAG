@@ -7,6 +7,7 @@ import { Send, Loader } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import ReactMarkdown from 'react-markdown';
 
 interface Message {
   id: string;
@@ -128,7 +129,36 @@ export function ChatInterface({ hasDocuments }: ChatInterfaceProps) {
                       : 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100'
                   }`}
                 >
-                  <p className="text-sm">{message.content}</p>
+                  <div className="prose prose-sm dark:prose-invert max-w-none">
+                    <ReactMarkdown
+                      components={{
+                        p: ({ children }) => <p className="mb-2 text-sm last:mb-0">{children}</p>,
+                        h1: ({ children }) => <h1 className="mb-2 text-lg font-bold">{children}</h1>,
+                        h2: ({ children }) => <h2 className="mb-2 text-base font-bold">{children}</h2>,
+                        h3: ({ children }) => <h3 className="mb-2 text-sm font-bold">{children}</h3>,
+                        ul: ({ children }) => <ul className="mb-2 list-disc list-inside">{children}</ul>,
+                        ol: ({ children }) => <ol className="mb-2 list-decimal list-inside">{children}</ol>,
+                        li: ({ children }) => <li className="text-sm">{children}</li>,
+                        code: ({ children }) => (
+                          <code className="bg-opacity-20 rounded px-2 py-1 font-mono text-xs">
+                            {children}
+                          </code>
+                        ),
+                        pre: ({ children }) => (
+                          <pre className="mb-2 overflow-x-auto rounded bg-opacity-10 p-2 text-xs">
+                            {children}
+                          </pre>
+                        ),
+                        blockquote: ({ children }) => (
+                          <blockquote className="mb-2 border-l-2 border-opacity-30 pl-2 italic">
+                            {children}
+                          </blockquote>
+                        ),
+                      }}
+                    >
+                      {message.content}
+                    </ReactMarkdown>
+                  </div>
                   {message.sources && message.sources.length > 0 && (
                     <div className="mt-2 border-t border-opacity-20 pt-2">
                       <p className="text-xs opacity-75">Sources:</p>

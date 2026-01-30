@@ -38,23 +38,28 @@ let currentCollectionName: string | null = null;
 
 export async function createOrGetCollection(collectionName: string) {
   if (!collection || currentCollectionName !== collectionName) {
-    // Reset collection to null to force recreation
     collection = null;
 
     try {
-      // First, try to delete if it exists with wrong config
-      await chromaClient.deleteCollection({ name: collectionName });
+      // Try to get existing collection first
+      collection = await chromaClient.getCollection({
+        name: collectionName,
+        embeddingFunction: embeddingFunction,
+      });
+      currentCollectionName = collectionName;
     } catch (e) {
-      // Collection doesn't exist, that's fine
+      // Collection doesn't exist, create a new one
+      try {
+        collection = await chromaClient.createCollection({
+          name: collectionName,
+          embeddingFunction: embeddingFunction,
+        });
+        currentCollectionName = collectionName;
+      } catch (createError) {
+        console.error('Error creating collection:', createError);
+        throw createError;
+      }
     }
-
-    // Create new collection with Gemini embedding function
-    collection = await chromaClient.createCollection({
-      name: collectionName,
-      embeddingFunction: embeddingFunction,
-    });
-
-    currentCollectionName = collectionName;
   }
   return collection;
 }

@@ -11,7 +11,18 @@ export async function POST(request: NextRequest) {
     }
 
     // Query Chroma for relevant documents
-    const searchResults = await queryCollection('RAGAI_v2', message, 5);
+    let searchResults;
+    try {
+      searchResults = await queryCollection('RAGAI_v2', message, 5);
+    } catch (queryError) {
+      console.error('Query error:', queryError);
+      return NextResponse.json({
+        response:
+          "I don't have any documents loaded yet. Please upload a document first to get started.",
+        context: '',
+        sources: [],
+      });
+    }
 
     // Extract relevant context from search results
     let context = '';

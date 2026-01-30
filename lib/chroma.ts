@@ -41,24 +41,24 @@ export async function createOrGetCollection(collectionName: string) {
     collection = null;
 
     try {
-      // Try to get existing collection first
-      collection = await chromaClient.getCollection({
+      // Delete existing collection to avoid old data
+      await chromaClient.deleteCollection({
+        name: collectionName,
+      });
+    } catch (e) {
+      // Collection doesn't exist, which is fine
+    }
+
+    try {
+      // Create a fresh new collection
+      collection = await chromaClient.createCollection({
         name: collectionName,
         embeddingFunction: embeddingFunction,
       });
       currentCollectionName = collectionName;
-    } catch (e) {
-      // Collection doesn't exist, create a new one
-      try {
-        collection = await chromaClient.createCollection({
-          name: collectionName,
-          embeddingFunction: embeddingFunction,
-        });
-        currentCollectionName = collectionName;
-      } catch (createError) {
-        console.error('Error creating collection:', createError);
-        throw createError;
-      }
+    } catch (createError) {
+      console.error('Error creating collection:', createError);
+      throw createError;
     }
   }
   return collection;
